@@ -1,0 +1,21 @@
+.magnetLines-container {
+  display: grid;
+  justify-items: center;
+  align-items: center;
+  opacity: 0.65;
+
+  /* Remove fixed width/height */
+  width: 100%;
+  height: 100%;
+
+  /* Optional: full section background */
+  background-color: #FAEBD7; /* Background: Antique White */
+}
+
+.magnetLines-container span {
+  display: block;
+  color: #8B4513; /* Accent: Saddle Brown */
+  transform-origin: center;
+  will-change: transform;
+  transform: rotate(var(--rotate));
+}
