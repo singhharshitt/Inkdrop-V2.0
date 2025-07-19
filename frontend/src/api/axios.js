@@ -1,12 +1,13 @@
-// frontend/src/api/axios.js
+
 import axios from "axios";
 
+
 const axiosInstance = axios.create({
-  baseURL: "http://localhost:5000/api",
-  withCredentials: true, // optional — needed if using cookies
+  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
+  withCredentials: true, // keep if using cookies/session
 });
 
-// ✅ Automatically attach token from localStorage
+
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
