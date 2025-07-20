@@ -38,6 +38,12 @@ function useDebounce(value, delay) {
   return debounced;
 }
 
+// Utility to sanitize image URLs (removes http://localhost:5000 or https://localhost:5000)
+function sanitizeUrl(url) {
+  if (!url) return url;
+  return url.replace(/^https?:\/\/localhost:5000/, '');
+}
+
 const Discover = () => {
   // Navbar/Sidebar state
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -55,13 +61,13 @@ const Discover = () => {
   };
 
   const finalLinks = [
-    commonLinks[0], 
-    dashboardLink, 
-    ...commonLinks.slice(1), 
+    commonLinks[0], // "Home"
+    dashboardLink, // inserted dynamically
+    ...commonLinks.slice(1), // includes "Discover" and the rest
   ];
 
   if (isLoggedIn && role === "admin") {
-    finalLinks.splice(4, 0, adminLinks[0]); 
+    finalLinks.splice(4, 0, adminLinks[0]); // Insert "Upload (Admin)"
   }
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -82,29 +88,30 @@ const Discover = () => {
     };
   }, [sidebarOpen]);
 
+  // Book Discovery State
   const [books, setBooks] = useState([]);
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
 
-
+  // Filters
   const [filterCategory, setFilterCategory] = useState("");
   const [filterTitle, setFilterTitle] = useState("");
   const [filterAuthor, setFilterAuthor] = useState("");
   const [recentOnly, setRecentOnly] = useState(false);
 
-
+  // Debounced search
   const debouncedTitle = useDebounce(filterTitle, 300);
   const debouncedAuthor = useDebounce(filterAuthor, 300);
 
-
+  // Toast/snackbar
   const [toast, setToast] = useState(null);
 
-
+  // Book request modal
   const [showRequestModal, setShowRequestModal] = useState(false);
   const [requestForm, setRequestForm] = useState({
     title: "",
     author: "",
-    category: "", 
+    category: "", // <-- add this
     message: "",
   });
   const [requestLoading, setRequestLoading] = useState(false);
@@ -176,7 +183,7 @@ const Discover = () => {
         {
           title: requestForm.title,
           author: requestForm.author,
-          category: requestForm.category, 
+          category: requestForm.category, // always valid
           additionalNotes: requestForm.message,
         },
         token ? { headers: { Authorization: `Bearer ${token}` } } : {}
@@ -200,21 +207,21 @@ const Discover = () => {
         return;
       }
 
-     
+      // First find the complete book data from state
       const bookToDownload = books.find(book => book._id === bookId);
       
       if (!bookToDownload) {
         throw new Error('Book not found in local data');
       }
 
-      
-      let pdfFile = bookToDownload.fileUrl || bookToDownload.file || bookToDownload.pdfFilename;
+      // Get the PDF file name
+      let pdfFile = sanitizeUrl(bookToDownload.fileUrl || bookToDownload.file || bookToDownload.pdfFilename);
       if (!pdfFile) throw new Error('This book is missing PDF file information');
 
-     
+      // 1. Record the download (optional, for logging)
       await axios.post(
         '/downloads',
-        { bookId: bookId }, 
+        { bookId: bookId }, // <-- match backend expectation
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -222,9 +229,9 @@ const Discover = () => {
         }
       );
 
-     
+      // 2. Download the file as a blob
       const response = await axios.get(
-        `http://localhost:5000${pdfFile}`,
+        pdfFile,
         { responseType: 'blob' }
       );
 
@@ -262,6 +269,7 @@ const Discover = () => {
 
 
 
+  // Clear Filters
   const clearFilters = () => {
     setFilterCategory("");
     setFilterTitle("");
@@ -554,7 +562,7 @@ const Discover = () => {
                 className="bg-[#FAEBD7] p-5 rounded-lg hover:scale-105 transition-transform duration-500 hover:shadow-lg border border-[#CDB79E] flex flex-col"
               >
                 <img
-                  src={`http://localhost:5000${book.coverImageUrl || '/default-cover.png'}`}
+                  src={sanitizeUrl(book.coverImageUrl) || '/default-cover.png'}
                   alt={book.title}
                   className="object-cover w-full h-48 rounded-lg mb-4"
                   style={{ background: "#fff" }}
