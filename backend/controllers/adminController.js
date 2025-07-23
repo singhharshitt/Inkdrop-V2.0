@@ -32,21 +32,24 @@ const uploadBook = async (req, res) => {
       return res.status(400).json({ message: "All fields are required" });
     }
 
+    // Check or create category
     let foundCategory = await Category.findOne({ name: category });
     if (!foundCategory) {
       foundCategory = await Category.create({ name: category });
     }
 
+    // Fallback if req.user is not available
     const uploadedBy = req.user?._id || new mongoose.Types.ObjectId("64b93d56b7fdc610e06e1c41");
 
+    // Use Cloudinary secure URL
     const book = await Book.create({
       title,
       author,
       category: foundCategory.name,
       description,
-      fileUrl: `/uploads/pdfs/${pdf.filename}`,
+      fileUrl: pdf.path, // Cloudinary URL
       fileSize: pdf.size,
-      coverImageUrl: `/uploads/covers/${cover.filename}`,
+      coverImageUrl: cover.path, // Cloudinary URL
       uploadedBy,
     });
 
@@ -56,7 +59,6 @@ const uploadBook = async (req, res) => {
     res.status(500).json({ message: "Server Error", error: err.message });
   }
 };
-
 
 const getCategories = async (req, res) => {
   try {
@@ -80,7 +82,6 @@ const addCategory = async (req, res) => {
     res.status(500).json({ message: "Error adding category" });
   }
 };
-
 
 const getRequests = async (req, res) => {
   try {

@@ -96,192 +96,128 @@ const navigate = useNavigate();
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FAEBD7] relative overflow-hidden">
-      <div className="absolute inset-0 z-0">
-        <MagnetLines
-          rows={9}
-          columns={9}
-          containerSize="100%"
-          lineColor="rgba(233, 116, 81, 0.3)"
-          lineWidth="1vmin"
-          lineHeight="3.5vmin"
-          baseAngle={0}
-        />
-      </div>
-
-      <div className="w-[90%] md:w-[70%] h-[80vh] bg-[#F5F5DC] rounded-xl shadow-lg flex overflow-hidden relative z-10">
-        <div className="w-1/2 bg-[#8B4513] flex flex-col items-center justify-center p-6 space-y-4">
-          <div className="pb-20">
-            <h1
-              className="block text-5xl text-center lg:text-7xl md:text-7xl font-extrabold text-gray-900"
-              style={{ fontFamily: '"Winky Rough", cursive' }}
-            >
-              INKDROP
-            </h1>
-            <p className="text-xs md:text-md lg:text-md text-center font-medium">
-              “Download. Read. Repeat.”
-            </p>
-          </div>
-          <div className="w-32 h-32 rounded-full bg-white border-4 border-[#8B4513] flex items-center justify-center text-2xl font-bold text-[#2E2E2E]">
-            <img src={inkicon} alt="Logo" className="" />
-          </div>
-          <div className="flex space-x-4 mt-6 mb-20">
-            <button
-              className={`px-4 py-2 rounded border-2 ${
-                isLogin
-                  ? "bg-[#E97451] text-white border-[#E97451]"
-                  : "bg-white text-[#E97451] border-[#E97451]"
-              }`}
-              onClick={() => {
-                setIsLogin(true);
-                setMessage("");
-              }}
-            >
-              Login
-            </button>
-            <button
-              className={`px-4 py-2 rounded border-2 ${
-                !isLogin
-                  ? "bg-[#E97451] text-white border-[#E97451]"
-                  : "bg-white text-[#E97451] border-[#E97451]"
-              }`}
-              onClick={() => {
-                setIsLogin(false);
-                setMessage("");
-              }}
-            >
-              Signup
-            </button>
-          </div>
-        </div>
-
-        <div
-          className="w-1/2 p-8 overflow-y-auto transition-all duration-500 text-[#2E2E2E] bg-[#CDB79E]"
-          style={{ fontFamily: '"Libertinus Mono", monospace' }}
+    <div className="min-h-screen flex items-center justify-center bg-[#FAEBD7] px-2 py-8">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-6 sm:p-8 flex flex-col items-center">
+        <img src={inkicon} alt="InkDrop Logo" className="w-16 h-16 mb-4" />
+        <h2 className="text-2xl font-bold mb-2 text-[#8B4513] text-center">{isLogin ? "Login" : "Sign Up"}</h2>
+        <MagnetLines />
+        <form
+          className="w-full flex flex-col gap-4 mt-4"
+          onSubmit={isLogin ? handleLogin : handleSignup}
         >
-          {message && (
-            <div
-              className={`text-center p-2 mb-2 rounded font-semibold ${
-                messageType === "error"
-                  ? "bg-red-100 text-red-700 border border-red-300"
-                  : "bg-green-100 text-green-700 border border-green-300"
-              }`}
-            >
-              {message}
-            </div>
-          )}
-
-          {isLogin ? (
-            <form className="space-y-4 mt-16" onSubmit={handleLogin}>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-center">
-                <span className="border-b-4 rounded-sm border-[#E97451]">
-                  Log
-                </span>
-                in
-              </h2>
-              <input
-                type="text"
-                placeholder="Username or Email"
-                name="loginInput"
-                value={formData.loginInput}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none text-md"
-              />
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded text-md"
-              >
-                <option value="">Select Role</option>
-                <option value="user">User</option>
-                <option value="admin">Admin</option>
-              </select>
-              <input
-                type="password"
-                placeholder="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none"
-              />
-              <div className="flex items-center space-x-2 text-[#8B4513]">
-                <input type="checkbox" id="remember" />
-                <label htmlFor="remember">Remember Me</label>
+          {!isLogin && (
+            <>
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
+                  value={formData.name}
+                  onChange={handleChange}
+                  autoComplete="name"
+                />
               </div>
-              <button
-                type="submit"
-                className="w-full bg-[#E97451] text-white py-2 rounded hover:bg-[#CD5C5C] transition font-extrabold"
-              >
-                Login
-              </button>
-            </form>
-          ) : (
-            <form className="space-y-4 mt-16" onSubmit={handleSignup}>
-              <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-4 text-center text-[#E97451]">
-                Sign
-                <span className="border-b-4 rounded-sm border-[#2E2E2E]">
-                  up
-                </span>
-              </h2>
-              <input
-                type="text"
-                placeholder="Name"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none text-md"
-              />
-              <input
-                type="text"
-                placeholder="Username"
-                name="username"
-                value={formData.username}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none text-md"
-              />
-              <input
-                type="email"
-                placeholder="Email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none text-md"
-              />
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="username">Username</label>
+                <input
+                  type="text"
+                  id="username"
+                  name="username"
+                  className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
+                  value={formData.username}
+                  onChange={handleChange}
+                  autoComplete="username"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
+                  value={formData.email}
+                  onChange={handleChange}
+                  autoComplete="email"
+                />
+              </div>
+            </>
+          )}
+          {isLogin ? (
+            <>
+              <div>
+                <label className="block text-sm font-semibold mb-1" htmlFor="loginInput">Username or Email</label>
+                <input
+                  type="text"
+                  id="loginInput"
+                  name="loginInput"
+                  className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
+                  value={formData.loginInput}
+                  onChange={handleChange}
+                  autoComplete="username"
+                />
+              </div>
+            </>
+          ) : null}
+          <div>
+            <label className="block text-sm font-semibold mb-1" htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
+              value={formData.password}
+              onChange={handleChange}
+              autoComplete={isLogin ? "current-password" : "new-password"}
+            />
+          </div>
+          {!isLogin && (
+            <div>
+              <label className="block text-sm font-semibold mb-1" htmlFor="confirmPassword">Confirm Password</label>
               <input
                 type="password"
-                placeholder="Password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none text-md"
-              />
-              <input
-                type="password"
-                placeholder="Confirm Password"
+                id="confirmPassword"
                 name="confirmPassword"
+                className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
                 value={formData.confirmPassword}
                 onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded focus:outline-none text-md"
+                autoComplete="new-password"
               />
-              <select
-                name="role"
-                value={formData.role}
-                onChange={handleChange}
-                className="w-full p-2 border border-gray-900 rounded text-md"
-              >
-                <option value="">Select Role</option>
-                <option value="user">User</option>
-                
-              </select>
-              <button
-                type="submit"
-                className="w-full bg-[#E97451] text-white py-2 rounded hover:bg-[#CD5C5C] transition font-extrabold"
-              >
-                Signup
-              </button>
-            </form>
+            </div>
           )}
+          <div>
+            <label className="block text-sm font-semibold mb-1" htmlFor="role">Role</label>
+            <select
+              id="role"
+              name="role"
+              className="w-full p-2 rounded border border-[#CDB79E] focus:outline-none"
+              value={formData.role}
+              onChange={handleChange}
+            >
+              <option value="">Select Role</option>
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          {message && (
+            <div className={`text-center text-sm font-semibold rounded p-2 ${messageType === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'}`}>{message}</div>
+          )}
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-[#E97451] text-white font-bold rounded hover:bg-[#A0522D] transition-all duration-200 mt-2"
+          >
+            {isLogin ? "Login" : "Sign Up"}
+          </button>
+        </form>
+        <div className="w-full flex flex-col sm:flex-row items-center justify-between mt-4 gap-2">
+          <button
+            className="text-[#8B4513] hover:underline text-sm"
+            onClick={() => setIsLogin(!isLogin)}
+          >
+            {isLogin ? "Don't have an account? Sign Up" : "Already have an account? Login"}
+          </button>
         </div>
       </div>
     </div>

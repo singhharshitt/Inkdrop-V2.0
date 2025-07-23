@@ -1,23 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const multer = require('multer');
-const path = require('path');
 const Book = require('../models/Book');
-const { protect } = require('../middleware/authMiddleware'); 
+const { protect } = require('../middleware/authMiddleware');
+const supabase = require('../utils/supabase'); // import supabase client
+const { v4: uuidv4 } = require('uuid'); // for unique filename
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    const ext = path.extname(file.originalname);
-    cb(null, file.fieldname + '-' + uniqueSuffix + ext);
-  },
-});
-
+// Use memory storage for multer (buffer instead of writing to disk)
+const storage = multer.memoryStorage();
 const upload = multer({ storage });
-
 
 router.post('/upload', protect, upload.single('file'), async (req, res) => {
   try {
@@ -27,12 +18,30 @@ router.post('/upload', protect, upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'All fields including file are required' });
     }
 
+    const file = req.file;
+    const filename = `${Date.now()}-${uuidv4()}-${file.originalname}`;
+    
+    // Upload to Supabase bucket
+    const { error: uploadError } = await supabase.storage
+      .from('inkdroop3') // use your actual bucket
+      .upload(filename, file.buffer, {
+        contentType: file.mimetype,
+      });
+
+    if (uploadError) {
+      console.error('[SUPABASE UPLOAD ERROR]', uploadError);
+      return res.status(500).json({ error: 'File upload to Supabase failed' });
+    }
+
+    // Get public URL
+    const { data: { publicUrl } } = supabase.storage.from('inkdroop3').getPublicUrl(filename);
+
     const newBook = new Book({
       title,
       author,
       category,
       uploadedBy: req.user.id,
-      fileUrl: `/uploads/${req.file.filename}`,
+      fileUrl: publicUrl,
     });
 
     await newBook.save();
@@ -53,7 +62,6 @@ router.get('/mybooks', protect, async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch your books' });
   }
 });
-
 
 router.get('/', async (req, res) => {
   try {

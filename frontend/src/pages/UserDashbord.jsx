@@ -17,7 +17,7 @@ export default function UserDashboard() {
   const role = auth?.user?.role;
   const navigate = useNavigate();
 
-  // Sidebar 
+  
   const dashboardLink = {
     name: "Dashboard",
     path: role === "admin" ? "/dashboardAdmin" : "/userdashboard",

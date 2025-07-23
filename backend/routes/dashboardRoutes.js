@@ -6,9 +6,7 @@ const Book = require('../models/Book');
 const Request = require('../models/Request');
 const User = require('../models/User');
 
-// @route    GET /api/dashboard
-// @desc     Get real-time dashboard stats for a logged-in user
-// @access   Private
+
 router.get('/', protect, async (req, res) => {
   try {
     const userId = req.user.id;
