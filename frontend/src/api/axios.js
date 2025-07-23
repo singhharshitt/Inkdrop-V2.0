@@ -1,12 +1,12 @@
 import axios from "axios";
 
-// Ensure this URL ends with `/api` if all routes use that prefix
+// ✅ Ensure baseURL ends with /api
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "http://localhost:5000/api",
-  withCredentials: true, // needed for sending cookies
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://inkdrop-backend.onrender.com/api",
+  withCredentials: true, // Send cookies across domains
 });
 
-// Inject token into every request
+// ✅ Inject token into every request
 axiosInstance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");

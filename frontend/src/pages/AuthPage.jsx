@@ -30,7 +30,7 @@ const navigate = useNavigate();
  const handleLogin = async (e) => {
   e.preventDefault();
   try {
-    const res = await API.post("/api/auth/login",{
+    const res = await API.post("/auth/login",{
       loginInput: formData.loginInput,
       password: formData.password,
       role: formData.role,
@@ -78,7 +78,7 @@ const navigate = useNavigate();
     }
 
     try {
-      const res = await API.post("/api/auth/signup", {
+      const res = await API.post("/auth/signup", {
         name: name.trim(),
         username: username.trim(),
         email: email.trim(),
