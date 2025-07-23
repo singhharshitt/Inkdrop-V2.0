@@ -11,13 +11,13 @@ const app = express();
 
 // ✅ Updated CORS configuration
 const allowedOrigins = [
-  'http://localhost:5173',
-  'https://inkdroopp.onrender.com'
+  'http://localhost:5173',                     // local development frontend
+  'https://inkdrop-v2-0.onrender.com'          // deployed frontend on Render
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps, curl, postman)
+    // Allow requests with no origin (like Postman, curl, mobile apps)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -27,12 +27,12 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json()); 
-app.use(cookieParser()); 
+app.use(express.json());
+app.use(cookieParser());
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ✅ Your existing routes remain unchanged
+// ✅ Existing routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/books', require('./routes/bookroutes'));
