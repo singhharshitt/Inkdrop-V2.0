@@ -96,11 +96,11 @@ export default function AdminDashboard() {
         setError(null);
         
         const [statsData, categoriesData, booksData, requestsData, logsData] = await Promise.all([
-          axios.get("/admin/dashboard"),
-          axios.get("/admin/categories"),
-          axios.get("/books"),
-          axios.get("/admin/requests"),
-          axios.get("/downloads/logs"),
+          axios.get("/api/admin/dashboard"),
+          axios.get("/api/admin/categories"),
+          axios.get("/api/books"),
+          axios.get("/api/admin/requests"),
+          axios.get("/api/downloads/logs"),
         ]);
         
         setStats(statsData.data);
@@ -159,13 +159,13 @@ export default function AdminDashboard() {
 
     try {
       if (editingCategory) {
-        const response = await axios.put(`/admin/categories/${editingCategory._id}`, { name: newCategory });
+        const response = await axios.put(`/api/admin/categories/${editingCategory._id}`, { name: newCategory });
         setCategories((prev) =>
           prev.map((cat) => (cat._id === editingCategory._id ? response.data : cat))
         );
         setToast({ type: "success", msg: "Category updated successfully" });
       } else {
-        const response = await axios.post("/admin/categories", { name: newCategory });
+        const response = await axios.post("/api/admin/categories", { name: newCategory });
         setCategories((prev) => [...prev, response.data]);
         setToast({ type: "success", msg: "Category added successfully" });
       }
@@ -180,7 +180,7 @@ export default function AdminDashboard() {
 
   const handleDeleteCategory = async (id) => {
     try {
-      await axios.delete(`/admin/categories/${id}`);
+      await axios.delete(`/api/admin/categories/${id}`);
       setCategories((prev) => prev.filter((cat) => cat._id !== id));
       setToast({ type: "success", msg: "Category deleted successfully" });
     } catch (err) {
@@ -199,11 +199,11 @@ export default function AdminDashboard() {
 
     try {
       if (editingBook) {
-        const response = await axios.put(`/admin/books/${editingBook._id}`, bookForm);
+        const response = await axios.put(`/api/admin/books/${editingBook._id}`, bookForm);
         setBooks((prev) => prev.map((b) => (b._id === editingBook._id ? response.data : b)));
         setToast({ type: "success", msg: "Book updated successfully" });
       } else {
-        const response = await axios.post("/admin/upload", bookForm);
+        const response = await axios.post("/api/admin/upload", bookForm);
         setBooks((prev) => [...prev, response.data]);
         setToast({ type: "success", msg: "Book added successfully" });
       }
@@ -218,7 +218,7 @@ export default function AdminDashboard() {
 
   const handleDeleteBook = async (id) => {
     try {
-      await axios.delete(`/admin/books/${id}`);
+      await axios.delete(`/api/admin/books/${id}`);
       setBooks((prev) => prev.filter((b) => b._id !== id));
       setToast({ type: "success", msg: "Book deleted successfully" });
     } catch (err) {
@@ -230,7 +230,7 @@ export default function AdminDashboard() {
   // Book request handlers
   const handleRequestAction = async (id, status) => {
     try {
-      await axios.patch(`/admin/requests/${id}`, { status });
+      await axios.patch(`/api/admin/requests/${id}`, { status });
       setRequests((prev) =>
         prev.map((req) => (req._id === id ? { ...req, status } : req))
       );

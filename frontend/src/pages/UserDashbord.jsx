@@ -77,7 +77,7 @@ export default function UserDashboard() {
           return;
         }
 
-        const response = await axios.get('/dashboard', {
+        const response = await axios.get('/api/dashboard', {
           headers: { Authorization: `Bearer ${token}` },
           params: { t: Date.now() } 
         });
@@ -117,7 +117,7 @@ export default function UserDashboard() {
       try {
         const token = localStorage.getItem('token');
         if (!token) return;
-        const response = await axios.get('/downloads/my-downloads', {
+        const response = await axios.get('/api/downloads/my-downloads', {
           headers: { Authorization: `Bearer ${token}` },
           params: { t: Date.now() }
         });
@@ -160,7 +160,7 @@ export default function UserDashboard() {
       try {
         const token = localStorage.getItem('token');
         if (!token) return;
-        const response = await axios.get('/requests/myrequests', {
+        const response = await axios.get('/api/requests/myrequests', {
           headers: { Authorization: `Bearer ${token}` },
           params: { t: Date.now() }
         });

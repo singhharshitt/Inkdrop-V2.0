@@ -2,7 +2,7 @@ import axios from "axios";
 
 // ✅ Ensure baseURL ends with /api
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://inkdrop-backend.onrender.com/api",
+  baseURL: import.meta.env.VITE_API_BASE_URL || "https://inkdrop-backend.onrender.com",
   withCredentials: true, // Send cookies across domains
 });
 

@@ -49,7 +49,7 @@ export default function Library() {
           return;
         }
 
-        const response = await axios.get('/downloads/my-downloads', {
+        const response = await axios.get('/api/downloads/my-downloads', {
           headers: { Authorization: `Bearer ${token}` },
           params: { t: Date.now() } // Cache busting
         });

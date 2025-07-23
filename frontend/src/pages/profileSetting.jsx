@@ -19,7 +19,7 @@ const ProfileSettings = () => {
       try {
         setLoading(true);
         const token = localStorage.getItem('token');
-        const res = await axios.get(`/users/me`, {
+        const res = await axios.get(`/api/users/me`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         setUser(res.data);
@@ -37,7 +37,7 @@ const ProfileSettings = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      await axios.patch('/users/update-email', { email }, {
+      await axios.patch('/api/users/update-email', { email }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setToast({ type: 'success', msg: 'Email updated successfully' });
@@ -56,7 +56,7 @@ const ProfileSettings = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      await axios.patch('/users/update-password', { password: newPassword }, {
+      await axios.patch('/api/users/update-password', { password: newPassword }, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setToast({ type: 'success', msg: 'Password updated successfully' });
@@ -73,7 +73,7 @@ const ProfileSettings = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      await axios.delete('/users/delete-account', {
+      await axios.delete('/api/users/delete-account', {
         headers: { Authorization: `Bearer ${token}` },
       });
       setToast({ type: 'success', msg: 'Account deleted' });

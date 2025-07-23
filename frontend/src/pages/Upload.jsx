@@ -110,8 +110,8 @@ const handleFileChange = (e) => {
     const fetchInitialData = async () => {
       try {
         const [categoriesRes, requestsRes] = await Promise.all([
-          axios.get("/admin/categories"),
-          axios.get("/admin/requests"),
+          axios.get("/api/admin/categories"),
+          axios.get("/api/admin/requests"),
         ]);
 
         setCategories(categoriesRes.data);
@@ -168,7 +168,7 @@ const handleFileChange = (e) => {
     const token = localStorage.getItem("token");
 
    
-    await axios.post("/admin/upload", formDataToSend, {
+    await axios.post("/api/admin/upload", formDataToSend, {
       headers: {
         "Content-Type": "multipart/form-data",
         Authorization: `Bearer ${token}`, 
@@ -208,7 +208,7 @@ const handleFileChange = (e) => {
     }
 
     try {
-      const { data } = await axios.post("/admin/categories", {
+      const { data } = await axios.post("/api/admin/categories", {
         name: newCategory,
       });
 
@@ -231,7 +231,7 @@ const handleFileChange = (e) => {
     setRequestActionLoading(id + status);
 
     try {
-      await axios.patch(`/admin/requests/${id}`, { status });
+      await axios.patch(`/api/admin/requests/${id}`, { status });
       setRequests((prev) =>
         prev.map((r) => (r._id === id ? { ...r, status } : r))
       );

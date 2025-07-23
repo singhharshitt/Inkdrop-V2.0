@@ -119,7 +119,7 @@ const Discover = () => {
   // Fetch books and categories
   useEffect(() => {
     setLoading(true);
-    Promise.all([axios.get("/books"), axios.get("/categories")])
+    Promise.all([axios.get("/api/books"), axios.get("/api/categories")])
       .then(([booksRes, catRes]) => {
         console.log("Books data:", booksRes.data);
         console.log("Categories data:", catRes.data);
@@ -179,7 +179,7 @@ const Discover = () => {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        '/requests/upload',
+        '/api/requests/upload',
         {
           title: requestForm.title,
           author: requestForm.author,
@@ -220,7 +220,7 @@ const Discover = () => {
 
       // 1. Record the download (optional, for logging)
       await axios.post(
-        '/downloads',
+        '/api/downloads',
         { bookId: bookId }, // <-- match backend expectation
         {
           headers: {
