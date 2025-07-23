@@ -18,14 +18,19 @@ backend/node_modules/
 backend/uploads/
 backend/public/
 backend/.env
+backend/.env.local
+backend/.DS_Store
+backend/debug.log
 
 # === Frontend ===
 frontend/node_modules/
 frontend/dist/
 frontend/.env
+frontend/.env.local
 frontend/.DS_Store
+frontend/debug.log
 
-# === OS/IDE files ===
+# === OS/IDE Files ===
 .vscode/
 .idea/
 *.suo
@@ -35,3 +40,23 @@ frontend/.DS_Store
 # === Coverage / Test Output ===
 coverage/
 *.lcov
+jest-html-reporters-*
+
+# === Logs and Debugging ===
+logs/
+*.tgz
+*.bak
+
+# === Build output ===
+build/
+tmp/
+temp/
+
+# === Optional Lockfiles ===
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# === Misc ===
+*.orig
+*.log.*
