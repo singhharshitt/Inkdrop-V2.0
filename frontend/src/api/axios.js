@@ -1,8 +1,17 @@
 import axios from "axios";
 
-// ✅ Ensure baseURL ends with /api
+// Smart baseURL selection: use env, or auto-detect local vs deployed
+let baseURL = import.meta.env.VITE_API_BASE_URL;
+if (!baseURL) {
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    baseURL = 'http://localhost:5000';
+  } else {
+    baseURL = 'https://inkdrop-backend.onrender.com';
+  }
+}
+
 const axiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL || "https://inkdrop-backend.onrender.com",
+  baseURL,
   withCredentials: true, // Send cookies across domains
 });
 

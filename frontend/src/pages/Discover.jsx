@@ -229,25 +229,38 @@ const Discover = () => {
         }
       );
 
-      // 2. Download the file as a blob
-      const response = await axios.get(
-        pdfFile,
-        { responseType: 'blob' }
-      );
-
-      const url = window.URL.createObjectURL(new Blob([response.data]));
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `${bookToDownload.title.replace(/[^a-z0-9]/gi, '_')}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      link.remove();
-      window.URL.revokeObjectURL(url);
-
-      setToast({
-        msg: `Downloading "${bookToDownload.title}"...`,
-        type: 'success'
-      });
+      // 2. Download the file
+      if (/^https?:\/\//.test(pdfFile)) {
+        // If the file is a full URL (Cloudinary/Supabase), use direct download to avoid CORS
+        const link = document.createElement('a');
+        link.href = pdfFile;
+        link.setAttribute('download', `${bookToDownload.title.replace(/[^a-z0-9]/gi, '_')}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        setToast({
+          msg: `Downloading "${bookToDownload.title}"...`,
+          type: 'success'
+        });
+      } else {
+        // If the file is a relative URL, use axios to fetch as blob
+        const response = await axios.get(
+          pdfFile,
+          { responseType: 'blob' }
+        );
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `${bookToDownload.title.replace(/[^a-z0-9]/gi, '_')}.pdf`);
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
+        window.URL.revokeObjectURL(url);
+        setToast({
+          msg: `Downloading "${bookToDownload.title}"...`,
+          type: 'success'
+        });
+      }
 
     } catch (error) {
       console.error("Download error:", error);

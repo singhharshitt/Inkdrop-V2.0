@@ -6,7 +6,9 @@ const {
   getRequests,
   updateRequestStatus,
   getAllUploadedBooks,
-  getAdminDashboard 
+  getAdminDashboard,
+  deleteCloudResources,
+  deleteBook
 } = require("../controllers/adminController");
 
 const {
@@ -15,39 +17,60 @@ const {
 } = require("../middleware/Upload");
 
 const { protect, isAdmin } = require("../middleware/authMiddleware");
+const Category = require("../models/Category");
+const Book = require("../models/Book"); // Needed for deleting book from DB
 
 const router = express.Router();
 
+// Upload Book (PDF + cover image)
 router.post(
   "/upload",
   protect,
   isAdmin,
   uploadBook,
   handleUploadErrors,
-  uploadBookController,
+  uploadBookController
 );
 
+// Get all categories
 router.get("/categories", protect, isAdmin, getCategories);
+
+// Add new category
 router.post("/categories", protect, isAdmin, addCategory);
 
-router.get("/requests", protect, isAdmin, getRequests);
-router.patch("/requests/:id", protect, isAdmin, updateRequestStatus);
-
-router.get("/books", protect, isAdmin, getAllUploadedBooks);
-
-// DELETE a book by ID
-router.delete('/books/:id', protect, isAdmin, async (req, res) => {
+// Delete category by ID
+router.delete("/categories/:id", protect, isAdmin, async (req, res) => {
+  console.log("DELETE /api/admin/categories/:id called", req.params.id);
   try {
-    const book = await Book.findByIdAndDelete(req.params.id);
-    if (!book) return res.status(404).json({ error: "Book not found" });
-    res.json({ message: "Book deleted successfully" });
+    const category = await Category.findByIdAndDelete(req.params.id);
+    if (!category) {
+      console.log("Category not found");
+      return res.status(404).json({ error: "Category not found" });
+    }
+    console.log("Category deleted from DB");
+    res.json({ message: "Category deleted successfully" });
   } catch (err) {
-    console.error("[DELETE BOOK ERROR]", err);
-    res.status(500).json({ error: "Failed to delete book" });
+    console.error("[DELETE CATEGORY ERROR]", err);
+    res.status(500).json({ error: "Failed to delete category" });
   }
 });
 
+// Get all book requests
+router.get("/requests", protect, isAdmin, getRequests);
 
-router.get("/dashboard", protect, isAdmin, getAdminDashboard); 
+// Update request status (fulfilled, declined, etc.)
+router.patch("/requests/:id", protect, isAdmin, updateRequestStatus);
+
+// Get all uploaded books
+router.get("/books", protect, isAdmin, getAllUploadedBooks);
+
+// Delete book by ID
+router.delete("/books/:id", protect, isAdmin, deleteBook);
+
+// Cleanup all PDFs and Images from Cloudinary
+router.delete("/delete-cloud-resources", protect, isAdmin, deleteCloudResources);
+
+// Admin dashboard stats
+router.get("/dashboard", protect, isAdmin, getAdminDashboard);
 
 module.exports = router;

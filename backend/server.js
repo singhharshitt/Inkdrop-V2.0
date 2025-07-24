@@ -5,19 +5,19 @@ const dotenv = require('dotenv');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 
+// Load environment variables
 dotenv.config();
 
 const app = express();
 
-// ✅ Updated CORS configuration
+// ✅ CORS configuration
 const allowedOrigins = [
-  'http://localhost:5173',                     // local development frontend
-  'https://inkdrop-v2-0.onrender.com'          // deployed frontend on Render
+  'http://localhost:5173', // local dev frontend
+  'https://inkdrop-v2-0.onrender.com' // deployed frontend
 ];
 
 app.use(cors({
   origin: function (origin, callback) {
-    // Allow requests with no origin (like Postman, curl, mobile apps)
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
@@ -27,12 +27,14 @@ app.use(cors({
   credentials: true
 }));
 
+// ✅ Middleware
 app.use(express.json());
 app.use(cookieParser());
 
+// ✅ Static file serving (uploaded files)
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
-// ✅ Existing routes
+// ✅ API Routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/books', require('./routes/bookroutes'));
@@ -45,6 +47,16 @@ app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/user/dashboard', require('./routes/dashboardUser'));
 app.use('/api/contact', require('./routes/contact'));
 
+// ✅ Serve frontend for unknown routes (SPA fallback)
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/uploads')) {
+    res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  } else {
+    next();
+  }
+});
+
+// ✅ MongoDB Connection
 mongoose.set('strictQuery', true);
 
 mongoose.connect(process.env.MONGO_URI, {
@@ -58,8 +70,6 @@ mongoose.connect(process.env.MONGO_URI, {
       console.log(`🚀 Server running on http://localhost:${PORT}`);
     });
   })
-  .catch((err) => {
+  .catch(err => {
     console.error('❌ MongoDB connection error:', err);
   });
-
-console.log('JWT_SECRET is:', process.env.JWT_SECRET);

@@ -480,7 +480,7 @@ const handleFileChange = (e) => {
                 >
                   <option value="">Select category</option>
                   {categories.map((cat) => (
-                    <option key={cat._id || cat.name} value={cat.name}>
+                    <option key={cat._id ? cat._id : cat.name} value={cat.name}>
                       {cat.name}
                     </option>
                   ))}
